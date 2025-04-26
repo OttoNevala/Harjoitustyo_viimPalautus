@@ -1,59 +1,84 @@
-/*package com.example.olioohjelmointiharjoitusty.comparison;
+package com.example.olioohjelmointiharjoitusty.comparison;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.fragment.app.Fragment;
+
 import com.example.olioohjelmointiharjoitusty.R;
-import com.example.olioohjelmointiharjoitusty.data.PopulationDataFetcher;
-import com.example.olioohjelmointiharjoitusty.data.EmploymentDataFetcher;
+import com.example.olioohjelmointiharjoitusty.ShowData.EmploymentRateDataRetriever;
+import com.example.olioohjelmointiharjoitusty.ShowData.PopulationDataRetriever;
+import com.example.olioohjelmointiharjoitusty.ShowData.WorkSelfSufficiencyDataRetriever;
 
 public class CompareFragment extends Fragment {
 
-    private TextView cityOneName;
-    private TextView cityTwoName;
-    private TextView cityOnePopulation;
-    private TextView cityTwoPopulation;
-    private TextView cityOneEmployment;
-    private TextView cityTwoEmployment;
+    private EditText cityOneInput, cityTwoInput;
+    private Button compareCitiesButton;
 
-    public CompareFragment() {
-        // Required empty public constructor
-    }
+    private TextView cityName, temperature, humidity, windText, populationText, employmentRateText, workSelfSufficiencyText;
+    private TextView cityName2, temperature2, humidity2, windText2, populationText2, employmentRateText2, workSelfSufficiencyText2;
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_compare, container, false);
-    }
+    private PopulationDataRetriever populationDataRetriever;
+    private EmploymentRateDataRetriever employmentRateDataRetriever;
+    private WorkSelfSufficiencyDataRetriever workSelfSufficiencyDataRetriever;
+
+    public CompareFragment() {}
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        cityOneName = view.findViewById(R.id.cityOneName);
-        cityTwoName = view.findViewById(R.id.cityTwoName);
-        cityOnePopulation = view.findViewById(R.id.cityOnePopulation);
-        cityTwoPopulation = view.findViewById(R.id.cityTwoPopulation);
-        cityOneEmployment = view.findViewById(R.id.cityOneEmployment);
-        cityTwoEmployment = view.findViewById(R.id.cityTwoEmployment);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_compare, container, false);
 
-        String city1 = "Helsinki";
-        String city2 = "Tampere";
+        cityOneInput = view.findViewById(R.id.cityOneInput);
+        cityTwoInput = view.findViewById(R.id.cityTwoInput);
+        compareCitiesButton = view.findViewById(R.id.compareCitiesButton);
 
-        cityOneName.setText(city1);
-        cityTwoName.setText(city2);
+        cityName = view.findViewById(R.id.cityName);
+        temperature = view.findViewById(R.id.temperature);
+        humidity = view.findViewById(R.id.humidity);
+        windText = view.findViewById(R.id.windText);
+        populationText = view.findViewById(R.id.populationText);
+        employmentRateText = view.findViewById(R.id.employmentRateText);
+        workSelfSufficiencyText = view.findViewById(R.id.workSelfSufficiencyText);
 
-        int population1 = PopulationDataFetcher.getPopulation(city1);
-        int population2 = PopulationDataFetcher.getPopulation(city2);
+        cityName2 = view.findViewById(R.id.cityName2);
+        temperature2 = view.findViewById(R.id.temperature2);
+        humidity2 = view.findViewById(R.id.humidity2);
+        windText2 = view.findViewById(R.id.windText2);
+        populationText2 = view.findViewById(R.id.populationText2);
+        employmentRateText2 = view.findViewById(R.id.employmentRateText2);
+        workSelfSufficiencyText2 = view.findViewById(R.id.workSelfSufficiencyText2);
 
-        cityOnePopulation.setText(String.valueOf(population1));
-        cityTwoPopulation.setText(String.valueOf(population2));
+        populationDataRetriever = new PopulationDataRetriever();
+        employmentRateDataRetriever = new EmploymentRateDataRetriever();
+        workSelfSufficiencyDataRetriever = new WorkSelfSufficiencyDataRetriever();
 
-        double employment1 = EmploymentDataFetcher.getEmploymentRate(city1);
-        double employment2 = EmploymentDataFetcher.getEmploymentRate(city2);
+        compareCitiesButton.setOnClickListener(v -> {
+            String city1 = cityOneInput.getText().toString().trim();
+            String city2 = cityTwoInput.getText().toString().trim();
 
-        cityOneEmployment.setText(String.format("%.1f%%", employment1));
-        cityTwoEmployment.setText(String.format("%.1f%%", employment2));
+            if (city1.isEmpty() || city2.isEmpty()) {
+                Toast.makeText(getContext(), "Syötä molemmat kaupunkien nimet", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            cityName.setText(city1);
+            cityName2.setText(city2);
+
+            populationDataRetriever.getData(requireContext(), city1, populationText);
+            employmentRateDataRetriever.getData(requireContext(), city1, employmentRateText);
+            workSelfSufficiencyDataRetriever.getData(requireContext(), city1, workSelfSufficiencyText);
+
+            populationDataRetriever.getData(requireContext(), city2, populationText2);
+            employmentRateDataRetriever.getData(requireContext(), city2, employmentRateText2);
+            workSelfSufficiencyDataRetriever.getData(requireContext(), city2, workSelfSufficiencyText2);
+        });
+
+        return view;
     }
-}*/
+}

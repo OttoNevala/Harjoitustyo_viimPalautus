@@ -1,6 +1,3 @@
-//Read me
-//This class is created for searching for a city
-
 package com.example.olioohjelmointiharjoitusty;
 
 import android.os.Bundle;
@@ -9,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -24,8 +22,7 @@ public class SearchFragment extends Fragment {
     private SharedViewModel sharedViewModel;
     private SearchHistoryAdapter historyAdapter;
 
-    public SearchFragment() {
-    }
+    public SearchFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -35,10 +32,10 @@ public class SearchFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-
         EditText cityNameInput = view.findViewById(R.id.cityNameInput);
         Button searchCity = view.findViewById(R.id.searchCity);
         RecyclerView recyclerView = view.findViewById(R.id.searchHistoryRecycler);
+        TextView searchStatus = view.findViewById(R.id.searchStatus);
 
         sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
@@ -49,6 +46,11 @@ public class SearchFragment extends Fragment {
         searchCity.setOnClickListener(v -> {
             String city = cityNameInput.getText().toString().trim();
             if (!city.isEmpty()) {
+
+                // ✅ Validoinnin tarkistus ilman rikkomista
+                SearchValidity searchValidity = new SearchValidity();
+                searchValidity.checkCityValidity(getContext(), city, searchStatus);
+
                 sharedViewModel.setCityName(city);
                 Toast.makeText(getContext(), "Tietoja haetaan...", Toast.LENGTH_SHORT).show();
 
@@ -60,13 +62,12 @@ public class SearchFragment extends Fragment {
             }
         });
 
-        // ✅ Klikkaamalla historiaa: kenttä täyttyy, tiedot lähetetään ja siirrytään tiedot-näkymään
+        // ✅ Klikkaamalla historiaa -> syöttökenttä täyttyy -> siirrytään info näkymään
         historyAdapter.setOnItemClickListener(city -> {
             cityNameInput.setText(city);
             sharedViewModel.setCityName(city);
             Toast.makeText(getContext(), "Tietoja haetaan: " + city, Toast.LENGTH_SHORT).show();
 
-            // Siirrytään tabin 1 (InformationFragment) näkymään
             if (getActivity() instanceof MainActivity) {
                 ((MainActivity) getActivity()).switchToTab(1);
             }

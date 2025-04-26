@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
             } else if (position == 2) {
                 tab.setText("Visa");
             } else if (position == 3) {
-                tab.setText("Vertailu");
+                tab.setText("Vertaa");
             }
         }).attach();
     }
