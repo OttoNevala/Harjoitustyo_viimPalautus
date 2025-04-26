@@ -111,8 +111,10 @@ public class WorkSelfSufficiencyDataRetriever {
                     double workSelfSufficiencyPercentage = Double.valueOf(valuesNode.get(baseIndex).asText());
 
                     // This creates a WorkSelfSufficiencyData instance.
-                    WorkSelfSufficiencyData workData = new WorkSelfSufficiencyData(workSelfSufficiencyPercentage);
+                    WorkSelfSufficiencyData workData = new WorkSelfSufficiencyData(0.0);
+                    workData.setWorkSelfSufficiencyPercentage(workSelfSufficiencyPercentage);
 
+                    // Use getter from WorkSelfSufficiencyData here
                     String resultText = "Työomavaraisuus: " + workData.getWorkSelfSufficiencyPercentage() + "%";
 
                     // This refreshes the UI in our main thread.
@@ -129,4 +131,3 @@ public class WorkSelfSufficiencyDataRetriever {
         }).start();
     }
 }
-

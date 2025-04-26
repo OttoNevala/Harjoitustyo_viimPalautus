@@ -1,25 +1,27 @@
 package com.example.olioohjelmointiharjoitusty.ShowData;
 
 public class PopulationData {
-    private int year;
     private int population;
-    private double percentChange;
+    private double populationChangePercent;
 
-    public PopulationData(int year, int population, double percentChange) {
-        this.year = year;
+    public PopulationData(int population, double populationChangePercent) {
         this.population = population;
-        this.percentChange = percentChange;
+        this.populationChangePercent = populationChangePercent;
     }
 
-    public int getYear() {
-        return year;
-    }
     public int getPopulation() {
         return population;
     }
-    public double getPercentChange() {
-        return percentChange;
+
+    public void setPopulation(int population) {
+        this.population = population;
     }
 
+    public double getPopulationChangePercent() {
+        return populationChangePercent;
+    }
 
+    public void setPopulationChangePercent(double populationChangePercent) {
+        this.populationChangePercent = populationChangePercent;
+    }
 }

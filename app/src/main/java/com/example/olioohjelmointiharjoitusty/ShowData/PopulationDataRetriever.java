@@ -1,6 +1,5 @@
 package com.example.olioohjelmointiharjoitusty.ShowData;
 
-
 import android.content.Context;
 import android.widget.TextView;
 import android.os.Handler;
@@ -21,19 +20,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import com.example.olioohjelmointiharjoitusty.R;
 
-/**
- * PopulationDataRetriever fetches population and population change data from the Tilastokeskus API.
- * It uses a JSON query stored in R.raw.population_query and updates the provided TextView (populationText)
- * on the main thread with the latest population and percent change data.
- */
 public class PopulationDataRetriever {
 
-    // Retrieves population data and updates the provided TextView.
+    // This retrieves the population and population change data from Tilastokeskus API
+    // and updates the provided TextView (populationText) on the main thread.
     public void getData(final Context context, final String municipality, final TextView populationText) {
         new Thread(() -> {
             ObjectMapper objectMapper = new ObjectMapper();
 
-            // First, retrieve the municipality codes from the API
+            // This retrieves municipality codes
             JsonNode areas = null;
             try {
                 areas = objectMapper.readTree(
@@ -52,7 +47,7 @@ public class PopulationDataRetriever {
             ArrayList<String> keys = new ArrayList<>();
             ArrayList<String> values = new ArrayList<>();
 
-            // Loop through the municipality codes in the "Alue" dimension
+            // This reads through the municipality codes
             for (JsonNode node : areas.get("variables").get(1).get("values")) {
                 values.add(node.asText());
             }
@@ -67,7 +62,7 @@ public class PopulationDataRetriever {
             String code = municipalityCodes.get(municipality);
 
             try {
-                // This opens connection to the API that delivers population data.
+                // This connects to the Tilastokeskus web
                 URL url = new URL("https://pxdata.stat.fi:443/PxWeb/api/v1/fi/StatFin/synt/statfin_synt_pxt_12dy.px");
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setRequestMethod("POST");
@@ -75,22 +70,18 @@ public class PopulationDataRetriever {
                 con.setRequestProperty("Accept", "application/json");
                 con.setDoOutput(true);
 
-                // Load the JSON query from raw resources.
-                // The query should include the necessary dimensions (for example "Alue", "Vuosi", and "Tiedot")
+                // This uses the R.raw.population_query to conduct its JSON query from Tilastokeskus.
                 JsonNode jsonInputString = objectMapper.readTree(
                         context.getResources().openRawResource(R.raw.population_query)
                 );
-                // Insert the municipality code into the query under the "Alue" dimension.
                 ((ObjectNode) jsonInputString.get("query").get(0).get("selection"))
                         .putArray("values").add(code);
 
-                // Write the query to the API.
                 byte[] input = objectMapper.writeValueAsBytes(jsonInputString);
                 OutputStream os = con.getOutputStream();
                 os.write(input, 0, input.length);
                 os.close();
 
-                // Read the API response.
                 BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"));
                 StringBuilder response = new StringBuilder();
                 String line;
@@ -99,29 +90,27 @@ public class PopulationDataRetriever {
                 }
                 br.close();
 
-                // Parse the JSON response.
+                // This reads through the response we got.
                 JsonNode municipalityData = objectMapper.readTree(response.toString());
 
-                // Extract the year labels from the "Vuosi" dimension.
+                // This reads through the year codes from our year dimension.
                 ArrayList<String> years = new ArrayList<>();
                 for (JsonNode node : municipalityData.get("dimension").get("Vuosi").get("category").get("label")) {
                     years.add(node.asText());
                 }
 
-                // Get the data values from the "value" field.
+                // This searches for the value table
                 JsonNode valuesNode = municipalityData.get("value");
-                // In this query, we expect two measures: population and population change.
                 int index = municipalityData.get("dimension")
                         .get("Tiedot").get("category").get("label").size();
 
-                // Retrieve the data for the most recent year.
+                // This searches the data from the latest year. Currently it's 2023 as of writing this code.
                 if (years.size() > 0) {
                     int lastIndex = years.size() - 1;
                     int baseIndex = lastIndex * index;
-                    // The population is found at baseIndex + 1.
+
                     int population = Integer.valueOf(valuesNode.get(baseIndex + 1).asText());
 
-                    // This calculates percent change using the previous year's population.
                     double percentChange = 0;
                     if (lastIndex > 0) {
                         int previousPopulation = Integer.valueOf(valuesNode.get((lastIndex - 1) * index + 1).asText());
@@ -131,11 +120,15 @@ public class PopulationDataRetriever {
                         }
                     }
 
-                    // This makes the result text
-                    String resultText = "Väestö: " + population
-                            + "\nVäestön muutos: " + percentChange + "%";
+                    // This creates a PopulationData instance.
+                    PopulationData populationData = new PopulationData(0, 0);
+                    populationData.setPopulation(population);
+                    populationData.setPopulationChangePercent(percentChange);
 
-                    // This updates the UI on the main thread
+                    String resultText = "Väestö: " + populationData.getPopulation()
+                            + "\nVäestön muutos: " + populationData.getPopulationChangePercent() + "%";
+
+                    // This refreshes the UI in our main thread.
                     new Handler(Looper.getMainLooper()).post(() -> {
                         populationText.setText(resultText);
                     });

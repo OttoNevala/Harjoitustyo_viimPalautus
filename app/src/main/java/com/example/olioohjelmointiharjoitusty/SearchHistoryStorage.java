@@ -3,6 +3,8 @@ package com.example.olioohjelmointiharjoitusty.history;
 import java.util.ArrayList;
 import java.util.List;
 
+
+//Search history storage, search history adapter and search history viewholder have been done closely following examples from week 9 and 11.
 public class SearchHistoryStorage {
 
     private static SearchHistoryStorage instance;
@@ -20,7 +22,7 @@ public class SearchHistoryStorage {
 
     public void addSearchEntry(String entry) {
         if (!searchHistory.contains(entry)) {
-            searchHistory.add(0, entry); // Uusin tulee listan alkuun
+            searchHistory.add(0, entry);
         }
     }
 
