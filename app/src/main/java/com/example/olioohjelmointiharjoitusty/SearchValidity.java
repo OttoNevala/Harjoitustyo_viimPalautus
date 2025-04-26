@@ -48,13 +48,14 @@ public class SearchValidity {
                 boolean finalFound = found;
                 new Handler(Looper.getMainLooper()).post(() -> {
                     if (finalFound) {
-                        targetView.setText("✅ Kunta löytyi Tilastokeskukselta");
+                        targetView.setText("💪 Kunta löytyi Tilastokeskukselta");
                         targetView.setTextColor(0xFF00FF00); // vihreä
                     } else {
-                        targetView.setText("❌ Kuntaa ei löytynyt");
+                        targetView.setText("👎 Kuntaa ei löytynyt");
                         targetView.setTextColor(0xFFFF0000); // punainen
                     }
-                });
+
+            });
 
             } catch (IOException e) {
                 e.printStackTrace();

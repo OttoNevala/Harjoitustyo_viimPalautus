@@ -20,6 +20,9 @@ import java.util.HashMap;
 
 public class EmploymentRateDataRetriever {
 
+    // This retrieves the employment rate data from Tilastokeskus API
+    // and updates the provided TextView (employmentRatePercentageText) on the main thread. All three data retriever classes have been done closely following
+    // the materials of week 10.
     public void getData(final Context context, final String municipality, final TextView employmentRatePercentageText) {
         new Thread(() -> {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -43,8 +46,12 @@ public class EmploymentRateDataRetriever {
                     return;
                 }
 
+
+                //This creates the key and value pairs that we use to find correct data
+
                 ArrayList<String> keys = new ArrayList<>();
                 ArrayList<String> values = new ArrayList<>();
+
                 for (JsonNode name : alueVariable.get("valueTexts")) {
                     keys.add(name.asText());
                 }
@@ -71,7 +78,7 @@ public class EmploymentRateDataRetriever {
                     return;
                 }
 
-                // This is our Json query which allows us to find right data.
+                // This creates our JSON query to fetch employment rate
                 ObjectNode queryRoot = objectMapper.createObjectNode();
                 ArrayNode queryArray = objectMapper.createArrayNode();
 
@@ -102,7 +109,7 @@ public class EmploymentRateDataRetriever {
                 queryRoot.set("query", queryArray);
                 queryRoot.set("response", objectMapper.createObjectNode().put("format", "json-stat2"));
 
-                // Here we send the post request to Tilastokeskus's API
+                // This connects to the Tilastokeskus web
                 URL apiUrl = new URL("https://pxdata.stat.fi:443/PxWeb/api/v1/fi/StatFin/tyokay/statfin_tyokay_pxt_115x.px");
                 HttpURLConnection con = (HttpURLConnection) apiUrl.openConnection();
                 con.setRequestMethod("POST");
@@ -131,10 +138,14 @@ public class EmploymentRateDataRetriever {
                 }
 
                 double employmentRatePercentage = valueNode.get(0).asDouble();
-                String resultText = employmentRatePercentage + " %";
 
+                // This creates an EmploymentRateData instance.
+                EmploymentRateData employmentRateData = new EmploymentRateData(0.0);
+                employmentRateData.setEmploymentRatePercentage(employmentRatePercentage);
 
-                //This refreshes the UI
+                String resultText = employmentRateData.getEmploymentRatePercentage() + " %";
+
+                // This refreshes the UI in our main thread.
                 new Handler(Looper.getMainLooper()).post(() -> {
                     employmentRatePercentageText.setText(resultText);
                 });

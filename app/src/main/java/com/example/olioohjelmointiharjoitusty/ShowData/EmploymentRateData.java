@@ -1,19 +1,17 @@
 package com.example.olioohjelmointiharjoitusty.ShowData;
 
 public class EmploymentRateData {
-    private double employmentRate;
+    private double employmentRatePercentage;
 
-    public EmploymentRateData(double employmentRate) {
-
-        this.employmentRate = employmentRate;
+    public EmploymentRateData(double employmentRatePercentage) {
+        this.employmentRatePercentage = employmentRatePercentage;
     }
 
-    public double getEmploymentRateData() {
-
-        return employmentRate;
+    public double getEmploymentRatePercentage() {
+        return employmentRatePercentage;
     }
 
-    public void setEmploymentRateData(double employmentRate) {
-        this.employmentRate = employmentRate;
+    public void setEmploymentRatePercentage(double employmentRatePercentage) {
+        this.employmentRatePercentage = employmentRatePercentage;
     }
 }
