@@ -1,48 +1,36 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background">
 
     <EditText
         android:id="@+id/cityOneInput"
-        android:layout_width="360dp"
-        android:layout_height="43dp"
-        android:layout_marginTop="68dp"
+        android:layout_width="245dp"
+        android:layout_height="54dp"
         android:ems="10"
-        android:background="@drawable/background2"
-        android:hint="Syötä kaupungin 1 nimi: "
+        android:hint="Syötä kaupungin 1 nimi"
         android:inputType="text"
         android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
+        app:layout_constraintBottom_toTopOf="@+id/cityTwoInput"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/cityTwoInput"
-        android:layout_width="360dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="12dp"
-        android:ems="10"
-        android:background="@drawable/background2"
-        android:hint="Syötä kaupungin 2 nimi: "
-        android:inputType="text"
-        android:textColor="@android:color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cityOneInput" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.809" />
 
     <Button
         android:id="@+id/compareCitiesButton"
         android:layout_width="165dp"
         android:layout_height="65dp"
         android:text="Vertaa kaupunkeja"
+        android:layout_marginBottom="35dp"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toTopOf="@+id/compareLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cityTwoInput" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
         android:id="@+id/compareLayout"
@@ -192,5 +180,19 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <EditText
+        android:id="@+id/cityTwoInput"
+        android:layout_width="245dp"
+        android:layout_height="54dp"
+        android:layout_marginBottom="40dp"
+        android:ems="10"
+        android:hint="Syötä kaupungin 2 nimi"
+        android:inputType="text"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
+        app:layout_constraintBottom_toTopOf="@+id/compareCitiesButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
