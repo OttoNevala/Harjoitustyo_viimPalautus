@@ -1,3 +1,5 @@
+//Read me
+//THis class is made for showing search history
 package com.example.olioohjelmointiharjoitusty.history;
 
 import android.view.LayoutInflater;

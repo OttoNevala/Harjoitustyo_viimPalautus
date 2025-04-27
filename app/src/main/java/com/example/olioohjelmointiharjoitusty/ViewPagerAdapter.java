@@ -10,7 +10,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.example.olioohjelmointiharjoitusty.ShowData.InformationFragment;
 import com.example.olioohjelmointiharjoitusty.quiz.QuizFragment;
-import com.example.olioohjelmointiharjoitusty.comparison.CompareFragment; // Ota käyttöön myöhemmin
+import com.example.olioohjelmointiharjoitusty.comparison.CompareFragment; // Maybe later used
 
 public class ViewPagerAdapter extends FragmentStateAdapter {
 
@@ -20,6 +20,7 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
 
     @NonNull
     @Override
+    //Here is the fragment switching place
     public Fragment createFragment(int position) {
         if (position == 0) {
             return new SearchFragment();
@@ -34,6 +35,6 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 4; // Palauta 4 kun CompareFragment otetaan käyttöön
+        return 4; // Return 4 when CompareFragment is used
     }
 }

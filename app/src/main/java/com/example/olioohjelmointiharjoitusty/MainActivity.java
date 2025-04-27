@@ -1,5 +1,5 @@
 //Read me
-//This class is created for switching between fragments
+//This class is created for switching between fragments.
 
 package com.example.olioohjelmointiharjoitusty;
 

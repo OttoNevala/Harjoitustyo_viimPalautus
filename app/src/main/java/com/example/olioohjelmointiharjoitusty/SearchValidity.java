@@ -1,3 +1,6 @@
+//Read Me
+//This awesome class is made for checking if json really finds the city exists
+
 package com.example.olioohjelmointiharjoitusty;
 
 import android.content.Context;
@@ -44,7 +47,7 @@ public class SearchValidity {
                         break;
                     }
                 }
-
+                //Emojis to show if city is found or not (great!)
                 boolean finalFound = found;
                 new Handler(Looper.getMainLooper()).post(() -> {
                     if (finalFound) {
@@ -56,7 +59,7 @@ public class SearchValidity {
                     }
 
             });
-
+//catching errors
             } catch (IOException e) {
                 e.printStackTrace();
                 new Handler(Looper.getMainLooper()).post(() -> {

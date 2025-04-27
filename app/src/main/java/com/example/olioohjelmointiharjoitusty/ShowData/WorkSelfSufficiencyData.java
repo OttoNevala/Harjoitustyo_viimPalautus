@@ -1,3 +1,6 @@
+//Read me
+//This class is made for showing the work self-sufficiency data.
+
 package com.example.olioohjelmointiharjoitusty.ShowData;
 
 public class WorkSelfSufficiencyData {

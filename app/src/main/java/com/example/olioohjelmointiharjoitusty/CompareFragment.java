@@ -1,3 +1,5 @@
+//Read me ;)
+//this is the code for comparing cities
 package com.example.olioohjelmointiharjoitusty.comparison;
 
 import android.os.Bundle;

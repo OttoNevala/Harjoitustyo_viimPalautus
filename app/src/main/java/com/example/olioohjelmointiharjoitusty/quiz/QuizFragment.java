@@ -1,3 +1,6 @@
+//Read me
+//This is the cherry of the program. It is a quiz made out of the json data, amazing!
+
 package com.example.olioohjelmointiharjoitusty.quiz;
 
 import androidx.annotation.NonNull;

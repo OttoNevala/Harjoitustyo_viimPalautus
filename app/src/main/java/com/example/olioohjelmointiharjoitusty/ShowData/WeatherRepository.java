@@ -1,3 +1,6 @@
+//Read me!
+//This class is made for handling weather data from openWheaterMap
+
 package com.example.olioohjelmointiharjoitusty.ShowData;
 
 import java.io.IOException;

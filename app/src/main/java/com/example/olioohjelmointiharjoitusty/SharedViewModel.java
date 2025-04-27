@@ -1,3 +1,6 @@
+//read me
+//This class is made to share data between fragmens
+
 package com.example.olioohjelmointiharjoitusty;
 
 import androidx.lifecycle.LiveData;
@@ -12,6 +15,7 @@ public class SharedViewModel extends ViewModel {
         cityName.setValue(city);
     }
 
+    //live data getter here
     public LiveData<String> getCityName() {
         return cityName;
     }

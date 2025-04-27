@@ -1,3 +1,5 @@
+//Read me
+//this class is made for storing search history
 package com.example.olioohjelmointiharjoitusty.history;
 
 import java.util.ArrayList;

@@ -1,3 +1,7 @@
+//Read this!
+//this class is made for showing search history
+
+
 package com.example.olioohjelmointiharjoitusty.history;
 
 import android.view.View;

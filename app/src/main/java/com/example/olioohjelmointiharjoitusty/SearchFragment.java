@@ -1,3 +1,6 @@
+//Read me
+//This class for searching citys
+
 package com.example.olioohjelmointiharjoitusty;
 
 import android.os.Bundle;
@@ -47,7 +50,7 @@ public class SearchFragment extends Fragment {
             String city = cityNameInput.getText().toString().trim();
             if (!city.isEmpty()) {
 
-                // ✅ Validoinnin tarkistus ilman rikkomista
+                // Validation of city name
                 SearchValidity searchValidity = new SearchValidity();
                 searchValidity.checkCityValidity(getContext(), city, searchStatus);
 
@@ -62,7 +65,7 @@ public class SearchFragment extends Fragment {
             }
         });
 
-        // ✅ Klikkaamalla historiaa -> syöttökenttä täyttyy -> siirrytään info näkymään
+        // Click this for history items
         historyAdapter.setOnItemClickListener(city -> {
             cityNameInput.setText(city);
             sharedViewModel.setCityName(city);

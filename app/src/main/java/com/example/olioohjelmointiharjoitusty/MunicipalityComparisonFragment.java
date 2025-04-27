@@ -1,3 +1,6 @@
+//Read this you handsome ;)
+//THis fragment is mad for comparing the betveen city data, Amazing!
+
 package com.example.olioohjelmointiharjoitusty.fragment;
 
 import android.os.Bundle;
@@ -14,7 +17,6 @@ import com.example.olioohjelmointiharjoitusty.R;
 public class MunicipalityComparisonFragment extends Fragment {
 
     public MunicipalityComparisonFragment() {
-        // Required empty public constructor
     }
 
     @Nullable

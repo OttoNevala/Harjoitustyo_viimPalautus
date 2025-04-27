@@ -1,3 +1,6 @@
+//Read me
+//This is created for showing the work self-sufficiency data.
+
 package com.example.olioohjelmointiharjoitusty.ShowData;
 
 import android.content.Context;

@@ -1,3 +1,6 @@
+//Readme
+//This class extracts wheatherdata from openWeatherMap
+
 package com.example.olioohjelmointiharjoitusty.ShowData;
 
 import org.json.JSONException;
