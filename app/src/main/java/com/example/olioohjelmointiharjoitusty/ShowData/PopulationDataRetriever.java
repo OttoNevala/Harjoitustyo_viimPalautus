@@ -1,10 +1,11 @@
 package com.example.olioohjelmointiharjoitusty.ShowData;
 
 import android.content.Context;
-import android.widget.TextView;
 import android.os.Handler;
 import android.os.Looper;
+import android.widget.TextView;
 
+import com.example.olioohjelmointiharjoitusty.R;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -18,9 +19,18 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import com.example.olioohjelmointiharjoitusty.R;
 
 public class PopulationDataRetriever {
+
+    private PopulationData populationData;
+    private OnDataLoadedListener onDataLoadedListener;
+    public interface OnDataLoadedListener {
+        void onDataLoaded(PopulationData data);
+    }
+
+    public void setOnDataLoadedListener(OnDataLoadedListener listener) {
+        this.onDataLoadedListener = listener;
+    }
 
     // This retrieves the population and population change data from Tilastokeskus API
     // and updates the provided TextView (populationText) on the main thread.
@@ -28,26 +38,19 @@ public class PopulationDataRetriever {
         new Thread(() -> {
             ObjectMapper objectMapper = new ObjectMapper();
 
-            // This retrieves municipality codes
             JsonNode areas = null;
             try {
                 areas = objectMapper.readTree(
                         new URL("https://pxdata.stat.fi:443/PxWeb/api/v1/fi/StatFin/synt/statfin_synt_pxt_12dy.px")
                 );
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-                return;
             } catch (IOException e) {
                 e.printStackTrace();
                 return;
             }
 
-            System.out.println(areas.toPrettyString());
-
             ArrayList<String> keys = new ArrayList<>();
             ArrayList<String> values = new ArrayList<>();
 
-            // This reads through the municipality codes
             for (JsonNode node : areas.get("variables").get(1).get("values")) {
                 values.add(node.asText());
             }
@@ -62,7 +65,6 @@ public class PopulationDataRetriever {
             String code = municipalityCodes.get(municipality);
 
             try {
-                // This connects to the Tilastokeskus web
                 URL url = new URL("https://pxdata.stat.fi:443/PxWeb/api/v1/fi/StatFin/synt/statfin_synt_pxt_12dy.px");
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setRequestMethod("POST");
@@ -70,7 +72,6 @@ public class PopulationDataRetriever {
                 con.setRequestProperty("Accept", "application/json");
                 con.setDoOutput(true);
 
-                // This uses the R.raw.population_query to conduct its JSON query from Tilastokeskus.
                 JsonNode jsonInputString = objectMapper.readTree(
                         context.getResources().openRawResource(R.raw.population_query)
                 );
@@ -90,21 +91,17 @@ public class PopulationDataRetriever {
                 }
                 br.close();
 
-                // This reads through the response we got.
                 JsonNode municipalityData = objectMapper.readTree(response.toString());
 
-                // This reads through the year codes from our year dimension.
                 ArrayList<String> years = new ArrayList<>();
                 for (JsonNode node : municipalityData.get("dimension").get("Vuosi").get("category").get("label")) {
                     years.add(node.asText());
                 }
 
-                // This searches for the value table
                 JsonNode valuesNode = municipalityData.get("value");
                 int index = municipalityData.get("dimension")
                         .get("Tiedot").get("category").get("label").size();
 
-                // This searches the data from the latest year. Currently it's 2023 as of writing this code.
                 if (years.size() > 0) {
                     int lastIndex = years.size() - 1;
                     int baseIndex = lastIndex * index;
@@ -120,25 +117,25 @@ public class PopulationDataRetriever {
                         }
                     }
 
-                    // This creates a PopulationData instance.
-                    PopulationData populationData = new PopulationData(0, 0);
+                    populationData = new PopulationData(0, 0);
                     populationData.setPopulation(population);
                     populationData.setPopulationChangePercent(percentChange);
 
                     String resultText = "Väestö: " + populationData.getPopulation()
                             + "\nVäestön muutos: " + populationData.getPopulationChangePercent() + "%";
 
-                    // This refreshes the UI in our main thread.
                     new Handler(Looper.getMainLooper()).post(() -> {
                         populationText.setText(resultText);
+                        if (onDataLoadedListener != null) {
+                            onDataLoadedListener.onDataLoaded(populationData);
+                        }
                     });
                 }
 
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }).start();
     }
+
 }

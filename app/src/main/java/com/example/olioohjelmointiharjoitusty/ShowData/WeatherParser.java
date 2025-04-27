@@ -20,6 +20,26 @@ public class WeatherParser {
             this.description = description;
             this.iconCode = iconCode;
         }
+
+        public double getTemperature() {
+            return temperature;
+        }
+
+        public double getHumidity() {
+            return humidity;
+        }
+
+        public double getWindSpeed() {
+            return windSpeed;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public String getIconCode() {
+            return iconCode;
+        }
     }
 
     public static WeatherData parse(String json) throws JSONException {
