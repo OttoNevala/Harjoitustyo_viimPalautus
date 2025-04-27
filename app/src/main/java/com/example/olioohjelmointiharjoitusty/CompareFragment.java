@@ -2,6 +2,7 @@
 //this is the code for comparing cities
 package com.example.olioohjelmointiharjoitusty.comparison;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,8 @@ import androidx.fragment.app.Fragment;
 import com.example.olioohjelmointiharjoitusty.R;
 import com.example.olioohjelmointiharjoitusty.ShowData.EmploymentRateDataRetriever;
 import com.example.olioohjelmointiharjoitusty.ShowData.PopulationDataRetriever;
+import com.example.olioohjelmointiharjoitusty.ShowData.WeatherParser;
+import com.example.olioohjelmointiharjoitusty.ShowData.WeatherRepository;
 import com.example.olioohjelmointiharjoitusty.ShowData.WorkSelfSufficiencyDataRetriever;
 
 public class CompareFragment extends Fragment {
@@ -23,12 +26,13 @@ public class CompareFragment extends Fragment {
     private EditText cityOneInput, cityTwoInput;
     private Button compareCitiesButton;
 
-    private TextView cityName, temperature, humidity, windText, populationText, employmentRateText, workSelfSufficiencyText;
-    private TextView cityName2, temperature2, humidity2, windText2, populationText2, employmentRateText2, workSelfSufficiencyText2;
+    private TextView firstCityName, firstCityTemperature, firstCityHumidity, firstCityWind, firstCityPopulation, firstCityEmploymentRate, firstCityWorkSelfSufficiency;
+    private TextView secondCityName, secondCityTemperature, secondCityHumidity, secondCityWind, secondCityPopulation, secondCityEmploymentRate, secondCityWorkSelfSufficiency;
 
     private PopulationDataRetriever populationDataRetriever;
     private EmploymentRateDataRetriever employmentRateDataRetriever;
     private WorkSelfSufficiencyDataRetriever workSelfSufficiencyDataRetriever;
+    private WeatherRepository weatherRepository;
 
     public CompareFragment() {}
 
@@ -40,25 +44,26 @@ public class CompareFragment extends Fragment {
         cityTwoInput = view.findViewById(R.id.cityTwoInput);
         compareCitiesButton = view.findViewById(R.id.compareCitiesButton);
 
-        cityName = view.findViewById(R.id.cityName);
-        temperature = view.findViewById(R.id.temperature);
-        humidity = view.findViewById(R.id.humidity);
-        windText = view.findViewById(R.id.windText);
-        populationText = view.findViewById(R.id.populationText);
-        employmentRateText = view.findViewById(R.id.employmentRateText);
-        workSelfSufficiencyText = view.findViewById(R.id.workSelfSufficiencyText);
+        firstCityName = view.findViewById(R.id.cityName);
+        firstCityTemperature = view.findViewById(R.id.temperature);
+        firstCityHumidity = view.findViewById(R.id.humidity);
+        firstCityWind = view.findViewById(R.id.windText);
+        firstCityPopulation = view.findViewById(R.id.populationText);
+        firstCityEmploymentRate = view.findViewById(R.id.employmentRateText);
+        firstCityWorkSelfSufficiency = view.findViewById(R.id.workSelfSufficiencyText);
 
-        cityName2 = view.findViewById(R.id.cityName2);
-        temperature2 = view.findViewById(R.id.temperature2);
-        humidity2 = view.findViewById(R.id.humidity2);
-        windText2 = view.findViewById(R.id.windText2);
-        populationText2 = view.findViewById(R.id.populationText2);
-        employmentRateText2 = view.findViewById(R.id.employmentRateText2);
-        workSelfSufficiencyText2 = view.findViewById(R.id.workSelfSufficiencyText2);
+        secondCityName = view.findViewById(R.id.cityName2);
+        secondCityTemperature = view.findViewById(R.id.temperature2);
+        secondCityHumidity = view.findViewById(R.id.humidity2);
+        secondCityWind = view.findViewById(R.id.windText2);
+        secondCityPopulation = view.findViewById(R.id.populationText2);
+        secondCityEmploymentRate = view.findViewById(R.id.employmentRateText2);
+        secondCityWorkSelfSufficiency = view.findViewById(R.id.workSelfSufficiencyText2);
 
         populationDataRetriever = new PopulationDataRetriever();
         employmentRateDataRetriever = new EmploymentRateDataRetriever();
         workSelfSufficiencyDataRetriever = new WorkSelfSufficiencyDataRetriever();
+        weatherRepository = new WeatherRepository();
 
         compareCitiesButton.setOnClickListener(v -> {
             String city1 = cityOneInput.getText().toString().trim();
@@ -69,16 +74,49 @@ public class CompareFragment extends Fragment {
                 return;
             }
 
-            cityName.setText(city1);
-            cityName2.setText(city2);
+            firstCityName.setText(city1);
+            secondCityName.setText(city2);
 
-            populationDataRetriever.getData(requireContext(), city1, populationText);
-            employmentRateDataRetriever.getData(requireContext(), city1, employmentRateText);
-            workSelfSufficiencyDataRetriever.getData(requireContext(), city1, workSelfSufficiencyText);
+            populationDataRetriever.getData(requireContext(), city1, firstCityPopulation);
+            employmentRateDataRetriever.getData(requireContext(), city1, firstCityEmploymentRate);
+            workSelfSufficiencyDataRetriever.getData(requireContext(), city1, firstCityWorkSelfSufficiency);
 
-            populationDataRetriever.getData(requireContext(), city2, populationText2);
-            employmentRateDataRetriever.getData(requireContext(), city2, employmentRateText2);
-            workSelfSufficiencyDataRetriever.getData(requireContext(), city2, workSelfSufficiencyText2);
+            // doing json search for weather data and population data also updating ui
+            new Thread(() -> {
+                try {
+                    String json = weatherRepository.fetch(city1);
+                    WeatherParser.WeatherData data = WeatherParser.parse(json);
+                    ((Activity) getContext()).runOnUiThread(() -> {
+                        firstCityTemperature.setText(String.format("Lämpötila: %.1f°C", data.getTemperature()));
+                        firstCityHumidity.setText(String.format("Kosteus: %.0f%%", data.getHumidity()));
+                        firstCityWind.setText(String.format("Tuuli: %.1f m/s", data.getWindSpeed()));
+                    });
+                } catch (Exception e) {
+                    ((Activity) getContext()).runOnUiThread(() ->
+                            Toast.makeText(getContext(), "Säätietojen haku epäonnistui: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                    );
+                }
+            }).start();
+
+            populationDataRetriever.getData(requireContext(), city2, secondCityPopulation);
+            employmentRateDataRetriever.getData(requireContext(), city2, secondCityEmploymentRate);
+            workSelfSufficiencyDataRetriever.getData(requireContext(), city2, secondCityWorkSelfSufficiency);
+
+            new Thread(() -> {
+                try {
+                    String json = weatherRepository.fetch(city2);
+                    WeatherParser.WeatherData data = WeatherParser.parse(json);
+                    ((Activity) getContext()).runOnUiThread(() -> {
+                        secondCityTemperature.setText(String.format("Lämpötila: %.1f°C", data.getTemperature()));
+                        secondCityHumidity.setText(String.format("Kosteus: %.0f%%", data.getHumidity()));
+                        secondCityWind.setText(String.format("Tuuli: %.1f m/s", data.getWindSpeed()));
+                    });
+                } catch (Exception e) {
+                    ((Activity) getContext()).runOnUiThread(() ->
+                            Toast.makeText(getContext(), "Säätietojen haku epäonnistui: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                    );
+                }
+            }).start();
         });
 
         return view;
